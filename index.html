@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Simple Calculator</title>
+    <style>
+      :root {
+        color-scheme: light dark;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        display: grid;
+        place-items: center;
+        font-family: Arial, sans-serif;
+        background: #f1f5f9;
+      }
+
+      .calculator {
+        width: 320px;
+        padding: 16px;
+        border-radius: 14px;
+        background: #0f172a;
+        box-shadow: 0 10px 24px rgba(15, 23, 42, 0.3);
+      }
+
+      .display {
+        width: 100%;
+        box-sizing: border-box;
+        padding: 12px;
+        margin-bottom: 12px;
+        border: 0;
+        border-radius: 8px;
+        font-size: 1.6rem;
+        text-align: right;
+        background: #e2e8f0;
+        color: #0f172a;
+      }
+
+      .buttons {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 8px;
+      }
+
+      button {
+        border: 0;
+        border-radius: 8px;
+        padding: 14px;
+        font-size: 1.1rem;
+        cursor: pointer;
+      }
+
+      button.operator {
+        background: #334155;
+        color: #fff;
+      }
+
+      button.equal {
+        background: #16a34a;
+        color: #fff;
+      }
+
+      button.clear {
+        background: #dc2626;
+        color: #fff;
+      }
+    </style>
+  </head>
+  <body>
+    <main class="calculator">
+      <input id="display" class="display" type="text" value="0" readonly />
+      <div class="buttons">
+        <button class="clear" onclick="clearDisplay()">C</button>
+        <button class="operator" onclick="append('%')">%</button>
+        <button class="operator" onclick="backspace()">⌫</button>
+        <button class="operator" onclick="append('/')">÷</button>
+
+        <button onclick="append('7')">7</button>
+        <button onclick="append('8')">8</button>
+        <button onclick="append('9')">9</button>
+        <button class="operator" onclick="append('*')">×</button>
+
+        <button onclick="append('4')">4</button>
+        <button onclick="append('5')">5</button>
+        <button onclick="append('6')">6</button>
+        <button class="operator" onclick="append('-')">−</button>
+
+        <button onclick="append('1')">1</button>
+        <button onclick="append('2')">2</button>
+        <button onclick="append('3')">3</button>
+        <button class="operator" onclick="append('+')">+</button>
+
+        <button onclick="append('0')">0</button>
+        <button onclick="append('.')">.</button>
+        <button class="equal" style="grid-column: span 2" onclick="calculate()">=</button>
+      </div>
+    </main>
+
+    <script>
+      const display = document.getElementById('display');
+
+      function append(value) {
+        if (display.value === '0' || display.value === 'Error') {
+          display.value = value;
+        } else {
+          display.value += value;
+        }
+      }
+
+      function clearDisplay() {
+        display.value = '0';
+      }
+
+      function backspace() {
+        if (display.value.length <= 1 || display.value === 'Error') {
+          display.value = '0';
+          return;
+        }
+
+        display.value = display.value.slice(0, -1);
+      }
+
+      function calculate() {
+        try {
+          const expression = display.value.replace(/%/g, '/100');
+          const result = Function(`"use strict"; return (${expression})`)();
+
+          if (!Number.isFinite(result)) {
+            display.value = 'Error';
+            return;
+          }
+
+          display.value = String(result);
+        } catch {
+          display.value = 'Error';
+        }
+      }
+    </script>
+  </body>
+</html>
